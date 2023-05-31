@@ -53,7 +53,7 @@ reg_count_aux = #Number
 # How to execute this application:
 
 Step 01:
- Make git clone: git@github.com:guille1989/abaco.git
+ Make git clone: https://github.com/guille1989/abaco.git
 
 Step 02:
  Make CD to project folder /abaco
