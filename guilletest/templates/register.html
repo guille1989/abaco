@@ -1,0 +1,25 @@
+<h2>Register to GuilleTest Application</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="fieldWrapper">
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {{ form.username }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.password1.errors }}
+        <label for="{{ form.password1.id_for_label }}">Password:</label>
+        {{ form.password1 }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.password2.errors }}
+        <label for="{{ form.password2.id_for_label }}">Confirm Password:</label>
+        {{ form.password2 }}
+    </div>
+
+    <button type="submit">Register new User ?</button>
+</form>
+
+<a href="{% url 'login' %}">Cancel User Registration....</a>

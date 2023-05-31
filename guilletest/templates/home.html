@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>GuilleTest</title>
+</head>
+<body>
+    <h1 id="userIdentification">Home Page ---- Welcome ---- User: {{ request.GET.username }}</h1>
+
+   
+    <label>Navigato to another user page: </label>
+    <input type="text" onchange="onChangeInputUser(event)">
+    <button onclick="triggerFindUser()">Go !</button>
+        
+
+    <br />
+    <br />
+    <br />
+
+    <div style="display: block;" id="userHomoPage">
+        <button id="toggleButtonOption">Click heare to add a new "Maullido !"</button>
+
+        <div class="two-maullidos-tag" id="addNewMaullido">
+            <h3>New Maullido.....:</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <p>Characters remaining: <span id="char-count">140</span></p>
+                <button type="submit">Add new "Maullido!"</button>
+            </form>        
+        </div>
+
+        <div class="one-maullidos-tag" id="reviewMaullido">
+            <h3>Yours Maullidos.....:</h3>
+            <ul>
+                {% for item in data %}
+                    <li>{{ item.text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div style="display: none;" id="otherHomoPage">
+        <h3>Oher user "Maullidos !!"</h3>       
+        <ul id="tableBody">
+            <!-- Table rows will be added dynamically here -->
+        </ul>   
+        
+        <br />
+        <br />
+
+        <a href="#" onclick="backUser()">Back ?</a>
+    </div>   
+
+    <br />
+    <a href="{% url 'logout' %}">Logout ?</a>
+
+    <script>
+        //Save user logged in
+        var userIdentification = document.getElementById('userIdentification').innerText;
+        var userField = document.getElementById('userInput');
+        userField.style.display = "none"
+
+        if(userIdentification.split(': ').length === 1){
+            //console.log('No hay, pero es: ' + localStorage.getItem('user'));
+            let setUserIdentification = document.getElementById('userIdentification');
+            setUserIdentification.innerHTML = "User: " + localStorage.getItem('user');
+            userField.value = localStorage.getItem('user')
+        } else {
+            localStorage.setItem('user', userIdentification.split(': ')[1]);
+            userField.value = userIdentification.split(': ')[1]
+            //console.log('Si hay');
+        }
+        
+        var inputField = document.getElementById('textArea');
+        var charCount = document.getElementById('char-count');
+        
+        inputField.addEventListener('input', function() {
+            var remainingChars = inputField.maxLength - inputField.value.length;
+            charCount.textContent = remainingChars;
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("toggleButtonOption").addEventListener("click", function() { 
+            
+            let customTag1 = document.getElementById("addNewMaullido");
+            let customTag2 = document.getElementById("reviewMaullido");
+
+
+            if (customTag1.style.display === "none") {
+                customTag1.style.display = "block";
+                customTag2.style.display = "none";
+            } else {
+                customTag1.style.display = "none";
+                customTag2.style.display = "block";
+            }
+            });
+        });    
+
+        let userToFind = ''
+
+        function onChangeInputUser(event){
+            userToFind = event.target.value;
+        }
+
+        function triggerFindUser() {
+            let customTagUser = document.getElementById("userHomoPage");
+            let customTagOtherUser = document.getElementById("otherHomoPage");
+        
+            fetch(`/home-other-user/?user=${userToFind}`)
+            .then(response => response.json())
+            .then(data => {
+                // Display the data from pyrhon
+                if(data.length === 0){
+                    alert('User does not exist in this page: ' + userToFind)
+                    customTagOtherUser.style.display = "none"
+                    customTagUser.style.display = "block"
+                    localStorage.setItem('data', [])
+                }else{
+                    customTagOtherUser.style.display = "block"
+                    customTagUser.style.display = "none"
+                    localStorage.setItem('data', data)
+                    console.log(data)
+
+                    // Get a reference to the table body element
+                    const tableBody = document.getElementById('tableBody');
+                    // Clear existing table rows
+                    tableBody.innerHTML = '';
+                    // Iterate over the data and create table rows dynamically
+                    data.forEach(item => {
+                        const cell1 = document.createElement('li');          
+                        cell1.textContent = item.text;
+                        tableBody.appendChild(cell1);
+                    });
+
+                }                
+            });
+        }
+
+        function backUser(){
+            let customTagUser = document.getElementById("userHomoPage");
+            let customTagOtherUser = document.getElementById("otherHomoPage");
+
+            customTagOtherUser.style.display = "none"
+            customTagUser.style.display = "block"
+        }
+    </script>
+</body>
+</html>

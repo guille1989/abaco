@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>GuilleTest - Scraping</title>
+</head>
+<body>
+    <h1>My web Scraping test !</h1>
+    <p>Scraping Complete !!! scraped time: {{ data.3 }}</p>
+    <p>Scraping intent: {{ data.4 }}</p>
+
+    <a href="{% url 'scraping_history' %}">Whatch scraping history ?</a>
+
+    <h2>WhiteList: </h2>
+    {% if data %}
+        {% for item in data.0 %}
+            <li><strong>{{ item.Song_Artis }}</strong></li>
+            <ul>           
+                <li>
+                <strong>Song gender:</strong>
+                {% for tag in item.Tag %}
+                    <p>{{ tag }}</p>
+                {% endfor %}
+                </li>           
+            </ul>
+        {% endfor %}
+    <div class="following-genders">
+        <h2>Following genders:</h2>
+        {% for gender in data.1.Genders %}
+            <p> - {{ gender }} - </p>
+        {% endfor %}
+    </div>
+
+    <h2>Reliability:  {{ data.2 }}</h2>
+    {% endif %}
+
+    <br />
+    <a href="{% url 'logout' %}">Logout ?</a>
+</body>
+</html>
